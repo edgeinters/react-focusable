@@ -1,38 +1,86 @@
-import { action, computed, makeObservable } from 'mobx'
+import { action, computed, makeObservable, observable } from 'mobx'
 
-interface Bounds {
+export interface FocusableBounds {
     height: number
     x: number,
     y: number,
     width: number,
 }
 
-class Focusable {
+export class Focusable {
 
-    readonly id: string
+    readonly key: string
+    readonly parent: Focusable | null
 
-    private _bounds: Bounds | null = null
-    private _focusables: { [id: string]: Focusable } = {}
+    private _bounds: FocusableBounds | null = null
+    private _enabled: boolean = true
+    private _focusables: { [key: string]: Focusable } = {}
+    private _focused: boolean = false
 
     get bounds() {
         return this._bounds
     }
 
-    constructor(id: string) {
-        this.id = id
+    get isEnabled() {
+        return this._enabled
+    }
 
-        makeObservable(this, {
+    get isFocused() {
+        return this._focused
+    }
+
+    constructor(key: string, parent: Focusable | null = null) {
+        this.key = key
+        this.parent = parent
+
+        makeObservable<Focusable, '_bounds' | '_enabled' | '_focused'>(this, {
+            _bounds: observable,
+            _enabled: observable,
+            _focused: observable,
             bounds: computed,
+            isEnabled: computed,
+            isFocused: computed,
+            focus: action,
             setBounds: action,
+            setEnabled: action,
         })
     }
 
-    registerFocusable(focusable: Focusable) {
-        this._focusables[focusable.id] = focusable
+    focus() {
+        console.log('focus:', this.key);
+        if (this.isEnabled) {
+            this._focused = true
+        }
     }
 
-    setBounds(bounds: Bounds) {
+    registerFocusable(focusable: Focusable) {
+        this._focusables[focusable.key] = focusable
+    }
+
+    unregisterFocusable(focusable: Focusable) {
+        if (focusable.isFocused) {
+
+        }
+
+        delete this._focusables[focusable.key]
+    }
+
+    unregisterFocusableWithKey(key: string) {
+        if (this._focusables[key]) {
+            this.unregisterFocusable(this._focusables[key])
+        }
+    }
+
+    setBounds(bounds: FocusableBounds) {
         this._bounds = bounds
+    }
+
+    setEnabled(enabled: boolean) {
+        this._enabled = enabled
+
+        if (!enabled && this.isFocused) {
+            this._focused = false
+        }
     }
 
 }

@@ -1,10 +1,14 @@
 import React from 'react'
-
-import { ExampleComponent } from 'react-focusable'
-import 'react-focusable/dist/index.css'
+import { FixedList } from './components/FixedList'
 
 const App = () => {
-  return <ExampleComponent text="Create React Library Example 😄" />
+    return (
+        <>
+            <FixedList defaultFocus focusableKey='first' />
+            <FixedList focusableKey='second' />
+            <FixedList focusableKey='third' />
+        </>
+    )
 }
 
 export default App

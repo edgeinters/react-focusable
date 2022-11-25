@@ -1,7 +1,6 @@
 import React from "react";
 
-interface Focusable {
-    focusables: Focusable[]
-}
+import { focus } from "../store";
+import { Focusable } from "../store/focusable";
 
-export const FocusableContext = React.createContext<Focusable>({})
+export const FocusableContext = React.createContext<Focusable>(focus)
