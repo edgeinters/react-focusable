@@ -1,29 +1,33 @@
-import { Focusable } from "./focusable";
+import { Focusable } from "./focusable"
+import { FocusableDimension, FocusableDirection } from "./focusableBase"
+import { FocusableContainer } from "./focusableContainer"
+import FocusablePath from "./focusablePath"
 
-class Focus extends Focusable {
+class Focus extends FocusableContainer {
 
     constructor() {
-        super('root')
+        super(null, 'root')
     }
 
-    down(force: number = 1) {
-        console.log('force: ', force);
-
+    down(distance: number = 1) {
+        FocusablePath.move(distance, FocusableDimension.VERTICAL)
     }
 
-    left(force: number = 1) {
-        console.log('force: ', force);
-
+    getNextFocusable(focusable: Focusable, direction: FocusableDirection): Focusable | null {
+        console.log('getNextFocusable: ', focusable, direction);
+        return null
     }
 
-    right(force: number = 1) {
-        console.log('force: ', force);
-
+    left(distance: number = 1) {
+        FocusablePath.move(distance * -1, FocusableDimension.HORIZONTAL)
     }
 
-    up(force: number = 1) {
-        console.log('force: ', force);
+    right(distance: number = 1) {
+        FocusablePath.move(distance, FocusableDimension.HORIZONTAL)
+    }
 
+    up(distance: number = 1) {
+        FocusablePath.move(distance * -1, FocusableDimension.VERTICAL)
     }
 
 }

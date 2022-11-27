@@ -2,13 +2,17 @@ import { useContext, useEffect, useState } from "react"
 
 import { FocusableContext } from "../context"
 import { Focusable } from "../store/focusable";
+import { FocusableBounds } from "../store/focusableBase";
 
-export const useFocusable = (focusableKey: string) => {
-    const parentFocusable = useContext(FocusableContext)
-    const [focusable] = useState<Focusable>(new Focusable(focusableKey, parentFocusable))
+export const useFocusable = (focusableKey: string, focusableBounds: FocusableBounds | null = null) => {
+    const parentFocusableContainer = useContext(FocusableContext)
+    const [focusable, setFocusable] = useState<Focusable>()
 
     useEffect(() => {
-        return () => parentFocusable.unregisterFocusable(focusable)
+        const focusable = new Focusable(parentFocusableContainer, focusableKey, focusableBounds)
+        setFocusable(focusable)
+
+        return () => parentFocusableContainer.unregisterFocusable(focusable)
     }, [])
 
     return focusable

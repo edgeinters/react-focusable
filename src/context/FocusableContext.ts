@@ -1,6 +1,6 @@
 import React from "react";
 
 import { focus } from "../store";
-import { Focusable } from "../store/focusable";
+import { FocusableContainer } from "../store/focusableContainer";
 
-export const FocusableContext = React.createContext<Focusable>(focus)
+export const FocusableContext = React.createContext<FocusableContainer>(focus)

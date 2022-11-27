@@ -1,7 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import React, { useEffect } from "react"
 
-import { FocusableContext } from "../context"
 import { useFocusable } from "../hooks/useFocusable"
 import { Focusable as FocusableStore } from '../store/focusable'
 
@@ -16,23 +15,18 @@ export const Focusable = observer(({ children, defaultFocus, disabled, focusable
     const focusable = useFocusable(focusableKey)
 
     useEffect(() => {
-        if (defaultFocus) {
+        if (focusable && defaultFocus) {
             focusable.focus()
         }
-    }, [defaultFocus])
+    }, [focusable, defaultFocus])
 
     useEffect(() => {
-        focusable.setEnabled(!disabled)
-    }, [disabled])
+        focusable?.setEnabled(!disabled)
+    }, [focusable, disabled])
 
-    return (
-        <FocusableContext.Provider value={focusable}>
-            {
-                typeof children === 'function' ?
-                    children(focusable) :
-                    children
-            }
-        </FocusableContext.Provider>
-    )
+    if (!focusable) return
 
+    return typeof children === 'function' ?
+        children(focusable) :
+        children
 })

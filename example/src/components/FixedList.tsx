@@ -1,5 +1,5 @@
-import React from 'react'
-import { Focusable } from 'react-focusable'
+import React, { useCallback, useRef } from 'react'
+import { FocusableBaseTypes, FocusableContainer, FocusableTypes } from 'react-focusable'
 import { FixedSizeList as List } from 'react-window'
 import Styled from 'styled-components'
 
@@ -16,24 +16,47 @@ const StyledList = Styled(List)`
 `
 
 export const FixedList = ({ defaultFocus, focusableKey, ...props }: FixedListProps) => {
+    const listRef = useRef<List>(null)
+    const getNextFocusableCallback = useCallback((focusable: FocusableTypes.Focusable, direction: FocusableBaseTypes.FocusableDirection) => {
+        const currentFocusIndex = parseInt(focusable.key.split('-')[1])
+
+        if (direction === 'LEFT') {
+            return focusable.parent.focusables[`item-${currentFocusIndex - 1}`] as FocusableTypes.Focusable
+        } else if (direction === 'RIGHT') {
+            return focusable.parent.focusables[`item-${currentFocusIndex + 1}`] as FocusableTypes.Focusable
+        }
+
+        return null
+    }, [])
+
+    const onFocus = useCallback((index: number) => {
+        console.log('index: ', index);
+        listRef.current?.scrollToItem(index, 'auto')
+    }, [listRef])
+    console.log('onFocus: ', onFocus);
+
     return (
-        <Focusable
+        <FocusableContainer
             focusableKey={focusableKey}
+            getNextFocusable={getNextFocusableCallback}
         >
             <StyledList
                 height={200}
                 itemCount={100}
                 itemSize={200}
+                ref={listRef}
                 width={1000}
                 layout="horizontal"
                 {...props}
             >
                 {(props) => {
-                    console.log('props: ', props);
-                    return <FocusableItem defaultFocus={defaultFocus && !props.index} {...props} />
+                    return <FocusableItem
+                        onFocus={onFocus}
+                        {...props}
+                    />
                 }}
             </StyledList>
-        </Focusable>
+        </FocusableContainer>
     )
 
 }
