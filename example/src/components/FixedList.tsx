@@ -30,10 +30,8 @@ export const FixedList = ({ defaultFocus, focusableKey, ...props }: FixedListPro
     }, [])
 
     const onFocus = useCallback((index: number) => {
-        console.log('index: ', index);
         listRef.current?.scrollToItem(index, 'auto')
     }, [listRef])
-    console.log('onFocus: ', onFocus);
 
     return (
         <FocusableContainer

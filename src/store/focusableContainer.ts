@@ -3,6 +3,7 @@ import { FocusableBase, FocusableBounds, FocusableDirection, FocusablePosition }
 import focusablePath from "./focusablePath"
 
 export type NextFocusableCallback = (focusable: Focusable, direction: FocusableDirection) => Focusable | null
+// export type FocusableAtCallback = ()
 export type FocusableOffsetCallback = () => FocusablePosition
 
 export class FocusableContainer extends FocusableBase {
@@ -10,10 +11,18 @@ export class FocusableContainer extends FocusableBase {
     private _focusables: { [key: string]: FocusableBase } = {}
 
     getNextFocusableCallback?: NextFocusableCallback
+    // getFocusableAtCallback?: 
     getFocusableOffsetCallback?: FocusableOffsetCallback
 
     get focusables() {
         return this._focusables
+    }
+
+    get hasFocus() {
+        return Object.values(this._focusables).some(focusable => {
+            if (isFocusableContainer(focusable)) return focusable.hasFocus
+            if (isFocusable(focusable)) return focusable.isFocused
+        })
     }
 
     constructor(parent: FocusableContainer | null, key: string, bounds: FocusableBounds | null = null) {
@@ -21,8 +30,7 @@ export class FocusableContainer extends FocusableBase {
     }
 
     getNextFocusable(focusable: Focusable, direction: FocusableDirection): Focusable | null {
-        const nextFocusable = this.getNextFocusableCallback && this.getNextFocusableCallback(focusable, direction)
-        if (nextFocusable) return nextFocusable
+        if (this.getNextFocusableCallback) return this.getNextFocusableCallback(focusable, direction)
 
         return this.parent?.getNextFocusable(focusable, direction) || null
     }
