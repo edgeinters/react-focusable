@@ -1,27 +1,23 @@
 import { Focusable, isFocusable } from "./focusable"
-import { FocusableBase, FocusableBounds, FocusableDirection, FocusablePosition } from "./focusableBase"
+import { FocusableBase, FocusableBounds, FocusableCallback, FocusableDirection, FocusableFrustum, FocusableOffsetCallback } from "./focusableBase"
 import focusablePath from "./focusablePath"
-
-export type NextFocusableCallback = (focusable: Focusable, direction: FocusableDirection) => Focusable | null
-// export type FocusableAtCallback = ()
-export type FocusableOffsetCallback = () => FocusablePosition
 
 export class FocusableContainer extends FocusableBase {
 
     private _focusables: { [key: string]: FocusableBase } = {}
 
-    getNextFocusableCallback?: NextFocusableCallback
-    // getFocusableAtCallback?: 
+    getFocusableCallback?: FocusableCallback
     getFocusableOffsetCallback?: FocusableOffsetCallback
 
     get focusables() {
         return this._focusables
     }
 
-    get hasFocus() {
+    get hasFocus(): boolean {
         return Object.values(this._focusables).some(focusable => {
             if (isFocusableContainer(focusable)) return focusable.hasFocus
             if (isFocusable(focusable)) return focusable.isFocused
+            return false
         })
     }
 
@@ -29,10 +25,10 @@ export class FocusableContainer extends FocusableBase {
         super(parent, key, bounds)
     }
 
-    getNextFocusable(focusable: Focusable, direction: FocusableDirection): Focusable | null {
-        if (this.getNextFocusableCallback) return this.getNextFocusableCallback(focusable, direction)
+    getFocusable(frustum: FocusableFrustum, direction: FocusableDirection): Focusable | null {
+        if (this.getFocusableCallback) return this.getFocusableCallback(frustum, direction)
 
-        return this.parent?.getNextFocusable(focusable, direction) || null
+        return this.parent?.getFocusable(frustum, direction) || null
     }
 
     registerFocusable(focusable: FocusableBase) {

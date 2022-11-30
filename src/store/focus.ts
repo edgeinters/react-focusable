@@ -1,5 +1,5 @@
 import { Focusable } from "./focusable"
-import { FocusableDimension, FocusableDirection } from "./focusableBase"
+import { FocusableDimension, FocusableDirection, FocusableFrustum } from "./focusableBase"
 import { FocusableContainer } from "./focusableContainer"
 import FocusablePath from "./focusablePath"
 
@@ -13,8 +13,8 @@ class Focus extends FocusableContainer {
         FocusablePath.move(distance, FocusableDimension.VERTICAL)
     }
 
-    getNextFocusable(focusable: Focusable, direction: FocusableDirection): Focusable | null {
-        console.log('getNextFocusable: ', focusable, direction);
+    getFocusable(frustum: FocusableFrustum, direction: FocusableDirection): Focusable | null {
+        console.log('getFocusable: ', frustum, direction);
         return null
     }
 

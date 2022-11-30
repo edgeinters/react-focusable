@@ -93,11 +93,12 @@ class FocusablePath {
     }
 
     step() {
-        if (Math.abs(this._distance) < 1) {
+        if (Math.abs(this._distance) < 0.5) {
             return this.stop()
         }
 
-        const nextFocus = this.focused?.parent.getNextFocusable(this.focused!, this.direction)
+        // mozna poslat bounds a potom mit jen tento callback? getFocusable(bounds, direction)
+        const nextFocus = this.focused?.parent.getFocusable({ leftAngle: 0, rightAngle: 0, x: 0, y: 0 }, this.direction)
 
         if (!nextFocus) {
             return this.stop()

@@ -1,5 +1,9 @@
 import { action, computed, makeObservable, observable } from "mobx"
+import { Focusable } from "./focusable"
 import { FocusableContainer } from "./focusableContainer"
+
+export type FocusableCallback = (frustum: FocusableFrustum, direction: FocusableDirection) => Focusable | null
+export type FocusableOffsetCallback = () => FocusablePosition
 
 export interface FocusableBounds extends FocusablePosition {
     height: number
@@ -17,6 +21,11 @@ export enum FocusableDirection {
     LEFT = 'LEFT',
     RIGHT = 'RIGHT',
     UP = 'UP',
+}
+
+export interface FocusableFrustum extends FocusablePosition {
+    leftAngle: number
+    rightAngle: number
 }
 
 export interface FocusablePosition {

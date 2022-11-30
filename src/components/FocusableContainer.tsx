@@ -2,21 +2,20 @@ import React, { useEffect } from "react"
 
 import { FocusableContext } from "../context"
 import { useFocusableContainer } from "../hooks/useFocusableContainer"
-import { Focusable } from "../store/focusable"
-import { FocusableDirection, FocusablePosition } from "../store/focusableBase"
+import { FocusableBaseTypes } from "../store"
 
 export interface FocusableContainerProps {
     children?: React.ReactNode
     disabled?: boolean
     focusableKey: string
-    getFocusableOffset?: () => FocusablePosition
-    getNextFocusable?: (focusable: Focusable, direction: FocusableDirection) => Focusable | null
+    getFocusable?: FocusableBaseTypes.FocusableCallback
+    getFocusableOffset?: FocusableBaseTypes.FocusableOffsetCallback
 }
 
-export const FocusableContainer = ({ children, disabled, focusableKey, getFocusableOffset, getNextFocusable }: FocusableContainerProps) => {
+export const FocusableContainer = ({ children, disabled, focusableKey, getFocusable, getFocusableOffset }: FocusableContainerProps) => {
     const focusableContainer = useFocusableContainer(focusableKey)
+    focusableContainer.getFocusableCallback = getFocusable
     focusableContainer.getFocusableOffsetCallback = getFocusableOffset
-    focusableContainer.getNextFocusableCallback = getNextFocusable
 
     useEffect(() => {
         focusableContainer.setEnabled(!disabled)
