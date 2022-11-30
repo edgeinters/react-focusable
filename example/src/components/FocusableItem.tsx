@@ -26,6 +26,7 @@ export const FocusableItem = ({ defaultFocus, index, onFocus, ...props }: Focusa
         <Focusable
             defaultFocus={defaultFocus}
             focusableKey={`item-${index}`}
+            focusableBounds={{ height: 0, width: 0, x: 0, y: 0 }}
         >
             {(focusable) => {
                 if (focusable.isFocused) {

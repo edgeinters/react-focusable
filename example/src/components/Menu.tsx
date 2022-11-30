@@ -19,7 +19,7 @@ export const Menu = () => {
         >
             <StyledContainer>
                 <MenuItem title='Home' />
-                <MenuItem title='Movies' />
+                <MenuItem defaultFocus title='Movies' />
                 <MenuItem title='Series' />
             </StyledContainer>
         </FocusableContainer>

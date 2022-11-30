@@ -21,11 +21,12 @@ export enum FocusableDirection {
     LEFT = 'LEFT',
     RIGHT = 'RIGHT',
     UP = 'UP',
+    UNKNOWN = 'UNKNOWN'
 }
 
 export interface FocusableFrustum extends FocusablePosition {
-    leftAngle: number
-    rightAngle: number
+    minAngle: number
+    maxAngle: number
 }
 
 export interface FocusablePosition {
@@ -78,7 +79,7 @@ export class FocusableBase {
         }
     }
 
-    setBounds(bounds: FocusableBounds) {
+    setBounds(bounds: FocusableBounds | null) {
         this._bounds = bounds
     }
 

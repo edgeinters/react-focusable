@@ -36,6 +36,7 @@ export const FixedList = ({ defaultFocus, focusableKey, ...props }: FixedListPro
                 ref={listRef}
                 width={1000}
                 layout="horizontal"
+                onScroll={(props) => console.log(props)}
                 {...props}
             >
                 {(props) => {

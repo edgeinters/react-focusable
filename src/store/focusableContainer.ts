@@ -25,6 +25,14 @@ export class FocusableContainer extends FocusableBase {
         super(parent, key, bounds)
     }
 
+    getAllFocusables(): Focusable[] {
+        return Object.values(this._focusables).reduce((focusables, focusable) => {
+            if (isFocusable(focusable)) return [...focusables, focusable]
+
+            return [...focusables, ...(focusable as FocusableContainer).getAllFocusables()]
+        }, [])
+    }
+
     getFocusable(frustum: FocusableFrustum, direction: FocusableDirection): Focusable | null {
         if (this.getFocusableCallback) return this.getFocusableCallback(frustum, direction)
 

@@ -1,14 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Styled from 'styled-components'
 
-import { Focusable } from 'react-focusable'
+import { Focusable, useBounds } from 'react-focusable'
 
 interface MenuItemProps {
-    title: string
+    defaultFocus?: boolean
     style?: React.CSSProperties
+    title: string
 }
 
-const StyledContainer = Styled.span<{ isFocused: boolean }>`
+const StyledButton = Styled.span<{ isFocused: boolean }>`
     border: 1px solid rgba(0, 147, 255, ${props => props.isFocused ? 1 : 0.4});
     border-radius: 10px;
     height: auto;
@@ -17,15 +18,26 @@ const StyledContainer = Styled.span<{ isFocused: boolean }>`
     font-size: 20pt;
 `
 
-export const MenuItem = ({ title, ...props }: MenuItemProps) => {
+export const MenuItem = ({ defaultFocus, title, ...props }: MenuItemProps) => {
+    const [boundsElement, setBoundsElement] = useState<HTMLElement | null>(null)
+    const bounds = useBounds(boundsElement)
+
     return (
         <Focusable
+            defaultFocus={defaultFocus}
+            focusableBounds={bounds}
             focusableKey={title.toLowerCase()}
         >
             {(focusable) => {
-                return <StyledContainer isFocused={focusable.isFocused} {...props}>{title}</StyledContainer>
+                return <StyledButton
+                    {...props}
+                    isFocused={focusable.isFocused}
+                    ref={setBoundsElement}
+                >
+                    {title}
+                </StyledButton>
             }}
-        </Focusable>
+        </Focusable >
     )
 
 }
