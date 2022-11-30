@@ -1,5 +1,5 @@
 import React, { useCallback, useRef } from 'react'
-import { FocusableBaseTypes, FocusableContainer, FocusableTypes } from 'react-focusable'
+import { FocusableContainer } from 'react-focusable'
 import { FixedSizeList as List } from 'react-window'
 import Styled from 'styled-components'
 
@@ -17,17 +17,9 @@ const StyledList = Styled(List)`
 
 export const FixedList = ({ defaultFocus, focusableKey, ...props }: FixedListProps) => {
     const listRef = useRef<List>(null)
-    const getNextFocusableCallback = useCallback((focusable: FocusableTypes.Focusable, direction: FocusableBaseTypes.FocusableDirection) => {
-        const currentFocusIndex = parseInt(focusable.key.split('-')[1])
-
-        if (direction === 'LEFT') {
-            return focusable.parent.focusables[`item-${currentFocusIndex - 1}`] as FocusableTypes.Focusable
-        } else if (direction === 'RIGHT') {
-            return focusable.parent.focusables[`item-${currentFocusIndex + 1}`] as FocusableTypes.Focusable
-        }
-
-        return null
-    }, [])
+    // const getFocusableCallback = useCallback((frustum: FocusableBaseTypes.FocusableFrustum, direction: FocusableBaseTypes.FocusableDirection) => {
+    //     return null
+    // }, [])
 
     const onFocus = useCallback((index: number) => {
         listRef.current?.scrollToItem(index, 'auto')
@@ -36,7 +28,6 @@ export const FixedList = ({ defaultFocus, focusableKey, ...props }: FixedListPro
     return (
         <FocusableContainer
             focusableKey={focusableKey}
-            getNextFocusable={getNextFocusableCallback}
         >
             <StyledList
                 height={200}
