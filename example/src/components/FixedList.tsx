@@ -1,5 +1,6 @@
 import React, { useCallback, useRef } from 'react'
 import { FocusableContainer } from 'react-focusable'
+import AutoSizer from 'react-virtualized-auto-sizer'
 import { FixedSizeList as List } from 'react-window'
 import Styled from 'styled-components'
 
@@ -26,27 +27,35 @@ export const FixedList = ({ defaultFocus, focusableKey, ...props }: FixedListPro
     }, [listRef])
 
     return (
-        <FocusableContainer
-            focusableKey={focusableKey}
-        >
-            <StyledList
-                height={200}
-                itemCount={100}
-                itemSize={200}
-                ref={listRef}
-                width={1000}
-                layout="horizontal"
-                onScroll={(props) => console.log(props)}
-                {...props}
-            >
-                {(props) => {
-                    return <FocusableItem
-                        onFocus={onFocus}
-                        {...props}
-                    />
-                }}
-            </StyledList>
-        </FocusableContainer>
+        <AutoSizer disableHeight>
+            {({ width }) => {
+                return (
+                    <FocusableContainer
+                        focusableBounds={{ x: 0, y: 300, width, height: 200 }}
+                        focusableKey={focusableKey}
+                    >
+                        <StyledList
+                            height={200}
+                            itemCount={100}
+                            itemSize={200}
+                            ref={listRef}
+                            width={width}
+                            layout="horizontal"
+                            // onScroll={(props) => console.log(props)}
+                            {...props}
+                        >
+                            {(props) => {
+                                return <FocusableItem
+                                    focusableBounds={{ x: props.index * 200, y: 300, width: 200, height: 200 }}
+                                    onFocus={onFocus}
+                                    {...props}
+                                />
+                            }}
+                        </StyledList>
+                    </FocusableContainer>
+                )
+            }}
+        </AutoSizer>
     )
 
 }

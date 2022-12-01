@@ -107,7 +107,7 @@ class FocusablePath {
             return this.stop()
         }
 
-        let nextFocusableIndex = this.getFocusableIndexFromHistory()
+        let nextFocusableIndex = this._getFocusableIndexFromHistory()
         if (nextFocusableIndex < 0) { // history can't be used
             const frustum = getFrustum(this.focused.bounds, this.direction)
             const nextFocus = this.focused?.parent.getFocusable(frustum, this.direction)
@@ -139,7 +139,7 @@ class FocusablePath {
         this._timeout = 0
     }
 
-    private getFocusableIndexFromHistory(): number {
+    private _getFocusableIndexFromHistory(): number {
         if (this._distance > 0 && this._currentFocusableIndex < this._focusables.length - 1) {
             return this._currentFocusableIndex + 1
         }

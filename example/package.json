@@ -21,12 +21,14 @@
     "react-dom": "link:../node_modules/react-dom",
     "react-focusable": "link:..",
     "react-scripts": "link:../node_modules/react-scripts",
+    "react-virtualized-auto-sizer": "^1.0.7",
     "react-window": "^1.8.8",
     "styled-components": "^5.3.6",
     "typescript": "link:../node_modules/typescript"
   },
   "devDependencies": {
     "@babel/plugin-syntax-object-rest-spread": "^7.8.3",
+    "@types/react-virtualized-auto-sizer": "^1.0.1",
     "@types/react-window": "^1.8.5",
     "@types/styled-components": "^5.1.26"
   },

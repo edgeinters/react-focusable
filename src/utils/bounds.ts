@@ -1,3 +1,4 @@
+import { toJS } from "mobx";
 import { FocusableBounds, FocusableFrustum, FocusablePosition } from "../store/focusableBase";
 import { isPivotInFrustum } from "./frustum";
 
@@ -38,6 +39,7 @@ export const getBoundsPivot = (bounds: FocusableBounds): FocusablePosition => {
 
 export const isBoundsInFrustum = (bounds: FocusableBounds, frustum: FocusableFrustum): boolean => {
     const boundsPivot = getBoundsPivot(bounds)
+    console.log('isBoundsInFrustum: ', isPivotInFrustum(boundsPivot, frustum), toJS(bounds), frustum, boundsPivot);
 
     return isPivotInFrustum(boundsPivot, frustum)
 }

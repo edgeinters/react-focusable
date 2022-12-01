@@ -1,9 +1,10 @@
 import React from 'react'
-import { Focusable } from 'react-focusable'
+import { Focusable, FocusableBaseTypes } from 'react-focusable'
 import Styled from 'styled-components'
 
 interface FocusableItemProps {
     defaultFocus?: boolean
+    focusableBounds: FocusableBaseTypes.FocusableBounds | null
     index: number
     onFocus: (index: number) => void
     style?: React.CSSProperties
@@ -21,12 +22,12 @@ const FocusableContent = Styled.div<{ isFocused?: boolean }>`
     width: 100%;
 `
 
-export const FocusableItem = ({ defaultFocus, index, onFocus, ...props }: FocusableItemProps) => {
+export const FocusableItem = ({ defaultFocus, focusableBounds, index, onFocus, ...props }: FocusableItemProps) => {
     return (
         <Focusable
             defaultFocus={defaultFocus}
             focusableKey={`item-${index}`}
-            focusableBounds={{ height: 0, width: 0, x: 0, y: 0 }}
+            focusableBounds={focusableBounds}
         >
             {(focusable) => {
                 if (focusable.isFocused) {
