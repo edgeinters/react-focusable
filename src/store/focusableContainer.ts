@@ -34,9 +34,9 @@ export class FocusableContainer extends FocusableBase {
     }
 
     getFocusable(frustum: FocusableFrustum, direction: FocusableDirection): Focusable | null {
-        if (this.getFocusableCallback) return this.getFocusableCallback(frustum, direction)
+        const focusable = this.getFocusableCallback && this.getFocusableCallback(frustum, direction)
 
-        return this.parent?.getFocusable(frustum, direction) || null
+        return focusable || this.parent?.getFocusable(frustum, direction) || null
     }
 
     registerFocusable(focusable: FocusableBase) {

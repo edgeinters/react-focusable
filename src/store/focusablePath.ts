@@ -3,7 +3,7 @@ import { action, computed, makeObservable, observable } from "mobx";
 import { isOppositeDimensions, isOppositeDirection } from "../utils/direction";
 import { getFrustum } from "../utils/frustum";
 import { Focusable } from "./focusable";
-import { FocusableDimension, FocusableDirection } from "./focusableBase";
+import { FocusableDimension, FocusableDirection, FocusablePosition } from "./focusableBase";
 
 const DEFAULT_STEP_TIME = 100
 
@@ -12,6 +12,7 @@ class FocusablePath {
     private _currentFocusableIndex: number
     private _dimension: FocusableDimension
     private _distance: number
+    private _firstFocusable: Focusable | null
     private _focusables: Focusable[]
     private _timeout: number
 
@@ -34,6 +35,11 @@ class FocusablePath {
 
     get focused(): Focusable | null {
         return this._focusables[this._currentFocusableIndex] || null
+    }
+
+    get focusedDistancePoint(): FocusablePosition | null {
+        // count distance point of current focused item
+        return this._firstFocusable?.bounds || null
     }
 
     get hasFocus() {
@@ -70,6 +76,7 @@ class FocusablePath {
         this.stop()
 
         this._dimension = FocusableDimension.UNKNOWN
+        this._firstFocusable = focusable
         this._focusables = focusable ? [focusable] : []
         this._currentFocusableIndex = 0
     }
@@ -100,15 +107,26 @@ class FocusablePath {
             return this.stop()
         }
 
-        const frustum = getFrustum(this.focused.bounds, this.direction)
-        const nextFocus = this.focused?.parent.getFocusable(frustum, this.direction)
+        let nextFocusableIndex = this.getFocusableIndexFromHistory()
+        if (nextFocusableIndex < 0) { // history can't be used
+            const frustum = getFrustum(this.focused.bounds, this.direction)
+            const nextFocus = this.focused?.parent.getFocusable(frustum, this.direction)
 
-        if (!nextFocus) {
-            return this.stop()
+            if (!nextFocus) {
+                return this.stop()
+            }
+
+            if (this._distance < 0) {
+                this._focusables.unshift(nextFocus)
+                nextFocusableIndex = 0
+            } else {
+                this._focusables.push(nextFocus)
+                nextFocusableIndex = this._focusables.length - 1
+            }
+
         }
 
-        this._focusables.push(nextFocus)
-        this._currentFocusableIndex = this._focusables.length - 1
+        this._currentFocusableIndex = nextFocusableIndex
 
         this._distance = Math.max(Math.abs(this._distance) - 1, 0) * this.distanceSign
         this._timeout = window.setTimeout(() => this.step(), this.stepTime)
@@ -119,6 +137,18 @@ class FocusablePath {
 
         this._distance = 0
         this._timeout = 0
+    }
+
+    private getFocusableIndexFromHistory(): number {
+        if (this._distance > 0 && this._currentFocusableIndex < this._focusables.length - 1) {
+            return this._currentFocusableIndex + 1
+        }
+
+        if (this._distance < 0 && this._currentFocusableIndex > 0) {
+            return this._currentFocusableIndex - 1
+        }
+
+        return -1
     }
 
 }
