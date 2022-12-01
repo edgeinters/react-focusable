@@ -1,4 +1,5 @@
 import { FocusableBounds, FocusableFrustum, FocusablePosition } from "../store/focusableBase";
+import { isPivotInFrustum } from "./frustum";
 
 export const getBoundsTopLeft = (bounds: FocusableBounds): FocusablePosition => {
     return {
@@ -37,9 +38,8 @@ export const getBoundsPivot = (bounds: FocusableBounds): FocusablePosition => {
 
 export const isBoundsInFrustum = (bounds: FocusableBounds, frustum: FocusableFrustum): boolean => {
     const boundsPivot = getBoundsPivot(bounds)
-    const angle = Math.tan((boundsPivot.y - frustum.y) / (boundsPivot.x - frustum.x))
 
-    return angle >= frustum.minAngle && angle < frustum.maxAngle
+    return isPivotInFrustum(boundsPivot, frustum)
 }
 
 export const getBoundsPivotDistance = (bounds: FocusableBounds, pivot: FocusablePosition): number => {

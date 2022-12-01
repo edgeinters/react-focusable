@@ -25,8 +25,8 @@ export enum FocusableDirection {
 }
 
 export interface FocusableFrustum extends FocusablePosition {
-    minAngle: number
-    maxAngle: number
+    minVector: FocusablePosition | null
+    maxVector: FocusablePosition | null
 }
 
 export interface FocusablePosition {

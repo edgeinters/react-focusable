@@ -25,14 +25,36 @@ export const getFrustum = (bounds: FocusableBounds, direction: FocusableDirectio
     }
 
     const boundsPivot = getBoundsPivot(bounds)
-    const minAngle = minPosition ? Math.tan((minPosition.y - boundsPivot.y) / (minPosition.x - boundsPivot.x)) : -Math.PI / 2
-    const maxAngle = maxPosition ? Math.tan((maxPosition.y - boundsPivot.y) / (maxPosition.x - boundsPivot.x)) : Math.PI / 2
+    const maxVector = maxPosition && {
+        x: maxPosition.x - boundsPivot.x,
+        y: maxPosition.y - boundsPivot.y
+    }
+    const minVector = minPosition && {
+        x: minPosition.x - boundsPivot.x,
+        y: minPosition.y - boundsPivot.y
+    }
 
     return {
-        minAngle,
-        maxAngle,
+        maxVector,
+        minVector,
         x: boundsPivot.x,
         y: boundsPivot.y,
     }
 
+}
+
+export const isPivotInFrustum = (pivot: FocusablePosition, frustum: FocusableFrustum): boolean => {
+    const pivotVector: FocusablePosition = {
+        x: pivot.x - frustum.x,
+        y: pivot.y - frustum.y,
+    }
+
+    if (!frustum.maxVector || !frustum.minVector) return true
+
+    return !areVectorsClockwise(frustum.minVector, pivotVector) &&
+        areVectorsClockwise(frustum.maxVector, pivotVector)
+}
+
+export const areVectorsClockwise = (vector1: FocusablePosition, vector2: FocusablePosition) => {
+    return -vector1.x * vector2.y + vector1.y * vector2.x > 0
 }

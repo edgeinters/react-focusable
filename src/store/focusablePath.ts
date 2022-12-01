@@ -5,6 +5,8 @@ import { getFrustum } from "../utils/frustum";
 import { Focusable } from "./focusable";
 import { FocusableDimension, FocusableDirection } from "./focusableBase";
 
+const DEFAULT_STEP_TIME = 100
+
 class FocusablePath {
 
     private _currentFocusableIndex: number
@@ -39,7 +41,7 @@ class FocusablePath {
     }
 
     get stepTime() {
-        return 300
+        return DEFAULT_STEP_TIME
     }
 
     constructor() {
