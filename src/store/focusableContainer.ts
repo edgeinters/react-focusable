@@ -1,6 +1,6 @@
 import { toJS } from "mobx"
 import { isBoundsInFrustum, sortBoundsByPivotDistance } from "../utils/bounds"
-import { getFrustum, transformFrustumToChild } from "../utils/frustum"
+import { getFrustum, transformFrustumToChild, transformFrustumToParent } from "../utils/frustum"
 import { Focusable, isFocusable } from "./focusable"
 import { FocusableBase, FocusableBounds, FocusableCallback, FocusableDirection, FocusableFrustum, FocusableOffsetCallback } from "./focusableBase"
 import focusablePath from "./focusablePath"
@@ -47,7 +47,7 @@ export class FocusableContainer extends FocusableBase {
         console.log('nearestFocusable: ', this.key, focusables, frustum, toJS(this.bounds));
 
         // no focusable on the same level, we have to try upper
-        if (!nearestFocusable) return this.parent?.getFocusable(getFrustum(this.bounds!, direction), direction) || null
+        if (!nearestFocusable) return this.parent?.getFocusable(transformFrustumToParent(this.parent, getFrustum(this.bounds!, direction)), direction) || null
 
         // we found focusable to which to five focus
         if (isFocusable(nearestFocusable)) return nearestFocusable

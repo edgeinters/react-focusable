@@ -1,6 +1,5 @@
 import React from 'react'
 import { Focusable, FocusableContainer } from 'react-focusable'
-import { FixedList } from './components/FixedList'
 import { Menu } from './components/Menu'
 
 const App = () => {
@@ -24,9 +23,9 @@ const App = () => {
 
                 </Focusable>
             </FocusableContainer>
-            <FixedList focusableKey='first' />
+            {/* <FixedList focusableKey='first' />
             <FixedList focusableKey='second' />
-            <FixedList focusableKey='third' />
+            <FixedList focusableKey='third' /> */}
         </>
     )
 }

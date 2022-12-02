@@ -1,4 +1,3 @@
-import { toJS } from "mobx";
 import { FocusableBounds, FocusableDirection, FocusableFrustum, FocusablePosition } from "../store/focusableBase";
 import { FocusableContainer } from "../store/focusableContainer";
 import { getBoundsBottomLeft, getBoundsBottomRight, getBoundsPivot, getBoundsTopLeft, getBoundsTopRight } from "./bounds";
@@ -63,31 +62,36 @@ export const isPivotInFrustum = (pivot: FocusablePosition, frustum: FocusableFru
 }
 
 export const transformFrustumToChild = (child: FocusableContainer, frustum: FocusableFrustum): FocusableFrustum => {
-    console.log('transformFrustumToChild: ', child.key, toJS(child.bounds), frustum);
+    if (!child.bounds) return frustum
+
+    return transformFrustum(frustum, { x: -child.bounds.x, y: -child.bounds.y })
+}
+
+export const transformFrustumToParent = (parent: FocusableContainer, frustum: FocusableFrustum): FocusableFrustum => {
+    if (!parent.bounds) return frustum
+
+    return transformFrustum(frustum, parent.bounds)
+}
+
+const transformFrustum = (frustum: FocusableFrustum, position: FocusablePosition) => {
     let transformedFrustum = { ...frustum }
 
-    if(!child.bounds) return transformedFrustum
-    
     if (frustum.maxVector) {
         transformedFrustum.maxVector = {
-            x: frustum.maxVector.x - child.bounds.x,
-            y: frustum.maxVector.y - child.bounds.y
+            x: frustum.maxVector.x + position.x,
+            y: frustum.maxVector.y + position.y
         }
     }
 
     if (frustum.minVector) {
         transformedFrustum.minVector = {
-            x: frustum.minVector.x - child.bounds.x,
-            y: frustum.minVector.y - child.bounds.y
+            x: frustum.minVector.x + position.x,
+            y: frustum.minVector.y + position.y
         }
     }
-    
-    transformedFrustum.x -= child.bounds.x
-    transformedFrustum.y -= child.bounds.y
-    
+
+    transformedFrustum.x += position.x
+    transformedFrustum.y += position.y
+
     return transformedFrustum
 }
-
-// export const transformFrustumToParent = (parent: FocusableContainer, frustum: FocusableFrustum): FocusableFrustum => {
-    
-// }
