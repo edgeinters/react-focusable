@@ -1,4 +1,6 @@
-import { FocusableDimension } from "./focusableBase"
+import { toJS } from "mobx"
+import { Focusable } from "./focusable"
+import { FocusableDimension, FocusableDirection, FocusableFrustum } from "./focusableBase"
 import { FocusableContainer } from "./focusableContainer"
 import FocusablePath from "./focusablePath"
 
@@ -13,6 +15,14 @@ class Focus extends FocusableContainer {
             x: 0,
             y: 0
         })
+    }
+
+    getFocusable(frustum: FocusableFrustum, direction: FocusableDirection): Focusable | null {
+        Object.values(this.focusables).map(focusable => {
+            console.log(focusable.key, toJS(focusable.bounds));
+        })
+
+        return super.getFocusable(frustum, direction)
     }
 
     down(distance: number = 1) {

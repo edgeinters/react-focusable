@@ -1,6 +1,6 @@
 import { toJS } from "mobx"
 import { isBoundsInFrustum, sortBoundsByPivotDistance } from "../utils/bounds"
-import { getFrustum } from "../utils/frustum"
+import { getFrustum, transformFrustumToChild } from "../utils/frustum"
 import { Focusable, isFocusable } from "./focusable"
 import { FocusableBase, FocusableBounds, FocusableCallback, FocusableDirection, FocusableFrustum, FocusableOffsetCallback } from "./focusableBase"
 import focusablePath from "./focusablePath"
@@ -29,12 +29,15 @@ export class FocusableContainer extends FocusableBase {
     }
 
     getFocusable(frustum: FocusableFrustum, direction: FocusableDirection): Focusable | null {
+        console.log('getFocusable:', this.key, frustum);
         const focusable = this.getFocusableCallback && this.getFocusableCallback(frustum, direction)
         if (focusable) return focusable
 
         const focusables = Object.values(this.focusables)
             .filter((focusable) => {
-                if (focusable === focusablePath.focused) return false
+                if (focusable === focusablePath.focused || (focusable as FocusableContainer).hasFocus) return false
+
+                console.log('filtering focusable: ', focusable.key, focusablePath.focused?.key);
 
                 return focusable.bounds && isBoundsInFrustum(focusable.bounds, frustum)
             })
@@ -50,8 +53,7 @@ export class FocusableContainer extends FocusableBase {
         if (isFocusable(nearestFocusable)) return nearestFocusable
 
         // we found focusableContainer on the same level, lets get focusable from him
-        // TODO: transform frustum to the container's coordinates
-        return (nearestFocusable as FocusableContainer).getFocusable(frustum, direction)
+        return (nearestFocusable as FocusableContainer).getFocusable(transformFrustumToChild(nearestFocusable as FocusableContainer, frustum), direction)
     }
 
     registerFocusable(focusable: FocusableBase) {
