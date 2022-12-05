@@ -18,6 +18,7 @@ const StyledList = Styled(List)`
 
 export const FixedList = ({ defaultFocus, focusableKey, ...props }: FixedListProps) => {
     const listRef = useRef<List>(null)
+
     // const getFocusableCallback = useCallback((frustum: FocusableBaseTypes.FocusableFrustum, direction: FocusableBaseTypes.FocusableDirection) => {
     //     return null
     // }, [])
@@ -31,7 +32,7 @@ export const FixedList = ({ defaultFocus, focusableKey, ...props }: FixedListPro
             {({ width }) => {
                 return (
                     <FocusableContainer
-                        focusableBounds={{ x: 0, y: 300, width, height: 200 }}
+                        focusableBounds={{ x: 0, y: 500, width, height: 200 }}
                         focusableKey={focusableKey}
                     >
                         <StyledList

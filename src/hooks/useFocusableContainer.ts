@@ -6,9 +6,12 @@ import { FocusableContainer } from "../store/focusableContainer";
 
 export const useFocusableContainer = (focusableKey: string, focusableBounds: FocusableBounds | null = null) => {
     const parentFocusableContainer = useContext(FocusableContext)
-    const [focusableContainer] = useState<FocusableContainer>(new FocusableContainer(parentFocusableContainer, focusableKey, focusableBounds))
+    const [focusableContainer, setFocusableContainer] = useState<FocusableContainer>()
 
     useEffect(() => {
+        const focusableContainer = new FocusableContainer(parentFocusableContainer, focusableKey, focusableBounds)
+        setFocusableContainer(focusableContainer)
+
         return () => focusableContainer.unregisterFocusable(focusableContainer)
     }, [])
 

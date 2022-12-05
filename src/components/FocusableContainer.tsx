@@ -16,16 +16,23 @@ export interface FocusableContainerProps {
 
 export const FocusableContainer = ({ children, disabled, focusableBounds, focusableKey, getFocusable, getFocusableOffset }: FocusableContainerProps) => {
     const focusableContainer = useFocusableContainer(focusableKey, focusableBounds)
-    focusableContainer.getFocusableCallback = getFocusable
-    focusableContainer.getFocusableOffsetCallback = getFocusableOffset
 
     useEffect(() => {
-        focusableContainer.setEnabled(!disabled)
+        if (!focusableContainer) return
+
+        focusableContainer.getFocusableCallback = getFocusable
+        focusableContainer.getFocusableOffsetCallback = getFocusableOffset
+    }, [FocusableContainer])
+
+    useEffect(() => {
+        focusableContainer?.setEnabled(!disabled)
     }, [disabled])
 
     useEffect(() => {
         focusableContainer?.setBounds(focusableBounds)
     }, [focusableBounds])
+
+    if (!focusableContainer) return null
 
     return (
         <FocusableContext.Provider value={focusableContainer}>

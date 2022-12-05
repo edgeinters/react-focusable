@@ -39,7 +39,7 @@ export const getBoundsPivot = (bounds: FocusableBounds): FocusablePosition => {
 
 export const isBoundsInFrustum = (bounds: FocusableBounds, frustum: FocusableFrustum): boolean => {
     const boundsPivot = getBoundsPivot(bounds)
-    console.log('isBoundsInFrustum: ', isPivotInFrustum(boundsPivot, frustum), toJS(bounds), frustum, boundsPivot);
+    console.log('isBoundsInFrustum: ', isPivotInFrustum(boundsPivot, frustum), toJS(bounds), frustum, boundsPivot, Math.atan2(boundsPivot.y - frustum.y, boundsPivot.x - frustum.x));
 
     return isPivotInFrustum(boundsPivot, frustum)
 }

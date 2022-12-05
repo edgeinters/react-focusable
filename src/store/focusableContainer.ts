@@ -1,6 +1,6 @@
 import { toJS } from "mobx"
 import { isBoundsInFrustum, sortBoundsByPivotDistance } from "../utils/bounds"
-import { getFrustum, transformFrustumToChild, transformFrustumToParent } from "../utils/frustum"
+import { getFrustum, TransformationDirection, transformFrustumTo } from "../utils/frustum"
 import { Focusable, isFocusable } from "./focusable"
 import { FocusableBase, FocusableBounds, FocusableCallback, FocusableDirection, FocusableFrustum, FocusableOffsetCallback } from "./focusableBase"
 import focusablePath from "./focusablePath"
@@ -29,16 +29,16 @@ export class FocusableContainer extends FocusableBase {
     }
 
     getFocusable(frustum: FocusableFrustum, direction: FocusableDirection): Focusable | null {
-        console.log('getFocusable:', this.key, frustum);
+        console.log('getFocusable:', this.key, frustum, Object.values(this.focusables).length);
         const focusable = this.getFocusableCallback && this.getFocusableCallback(frustum, direction)
         if (focusable) return focusable
 
         const focusables = Object.values(this.focusables)
             .filter((focusable) => {
+                // console.log(this.key, 'isFocusd:', focusable === focusablePath.focused, 'hasFocus:', (focusable as FocusableContainer).hasFocus);
                 if (focusable === focusablePath.focused || (focusable as FocusableContainer).hasFocus) return false
 
-                console.log('filtering focusable: ', focusable.key, focusablePath.focused?.key);
-
+                console.log(focusable.key);
                 return focusable.bounds && isBoundsInFrustum(focusable.bounds, frustum)
             })
             .sort((focusableA, focusableB) => sortBoundsByPivotDistance(focusableA.bounds!, focusableB.bounds!, frustum))
@@ -47,16 +47,18 @@ export class FocusableContainer extends FocusableBase {
         console.log('nearestFocusable: ', this.key, focusables, frustum, toJS(this.bounds));
 
         // no focusable on the same level, we have to try upper
-        if (!nearestFocusable) return this.parent?.getFocusable(transformFrustumToParent(this.parent, getFrustum(this.bounds!, direction)), direction) || null
+        // if (!nearestFocusable) return this.parent?.getFocusable(transformFrustumTo(frustum, this.bounds, TransformationDirection.TO_PARENT), direction) || null
+        if (!nearestFocusable) return this.parent?.getFocusable(getFrustum(this.bounds!, direction), direction) || null
 
         // we found focusable to which to five focus
         if (isFocusable(nearestFocusable)) return nearestFocusable
 
         // we found focusableContainer on the same level, lets get focusable from him
-        return (nearestFocusable as FocusableContainer).getFocusable(transformFrustumToChild(nearestFocusable as FocusableContainer, frustum), direction)
+        return (nearestFocusable as FocusableContainer).getFocusable(transformFrustumTo(frustum, nearestFocusable.bounds, TransformationDirection.TO_CHILD), direction)
     }
 
     registerFocusable(focusable: FocusableBase) {
+        console.log('registerFocusable: ', focusable.key);
         this._focusables[focusable.key] = focusable
 
         // If no another focusable is focused, focus it

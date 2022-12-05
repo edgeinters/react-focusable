@@ -1,7 +1,11 @@
 import { FocusableBounds, FocusableDirection, FocusableFrustum, FocusablePosition } from "../store/focusableBase";
-import { FocusableContainer } from "../store/focusableContainer";
 import { getBoundsBottomLeft, getBoundsBottomRight, getBoundsPivot, getBoundsTopLeft, getBoundsTopRight } from "./bounds";
 import { areVectorsClockwise } from "./vector";
+
+export enum TransformationDirection {
+    'TO_PARENT' = 1,
+    'TO_CHILD' = -1,
+}
 
 export const getFrustum = (bounds: FocusableBounds, direction: FocusableDirection): FocusableFrustum => {
     let minPosition: FocusablePosition | null = null
@@ -61,37 +65,12 @@ export const isPivotInFrustum = (pivot: FocusablePosition, frustum: FocusableFru
         areVectorsClockwise(frustum.maxVector, pivotVector)
 }
 
-export const transformFrustumToChild = (child: FocusableContainer, frustum: FocusableFrustum): FocusableFrustum => {
-    if (!child.bounds) return frustum
+export const transformFrustumTo = (frustum: FocusableFrustum, bounds: FocusableBounds | null, direction: TransformationDirection): FocusableFrustum => {
+    if (!bounds) return frustum
 
-    return transformFrustum(frustum, { x: -child.bounds.x, y: -child.bounds.y })
-}
-
-export const transformFrustumToParent = (parent: FocusableContainer, frustum: FocusableFrustum): FocusableFrustum => {
-    if (!parent.bounds) return frustum
-
-    return transformFrustum(frustum, parent.bounds)
-}
-
-const transformFrustum = (frustum: FocusableFrustum, position: FocusablePosition) => {
-    let transformedFrustum = { ...frustum }
-
-    if (frustum.maxVector) {
-        transformedFrustum.maxVector = {
-            x: frustum.maxVector.x + position.x,
-            y: frustum.maxVector.y + position.y
-        }
+    return {
+        ...frustum,
+        x: frustum.x + bounds.x * direction,
+        y: frustum.y + bounds.y * direction
     }
-
-    if (frustum.minVector) {
-        transformedFrustum.minVector = {
-            x: frustum.minVector.x + position.x,
-            y: frustum.minVector.y + position.y
-        }
-    }
-
-    transformedFrustum.x += position.x
-    transformedFrustum.y += position.y
-
-    return transformedFrustum
 }
