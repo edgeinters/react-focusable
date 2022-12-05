@@ -1,5 +1,5 @@
 import { toJS } from "mobx"
-import { isBoundsInFrustum, sortBoundsByPivotDistance } from "../utils/bounds"
+import { isBoundsInFrustum, sortFocusablesByPivotDistance } from "../utils/bounds"
 import { getFrustum, TransformationDirection, transformFrustumTo } from "../utils/frustum"
 import { Focusable, isFocusable } from "./focusable"
 import { FocusableBase, FocusableBounds, FocusableCallback, FocusableDirection, FocusableFrustum, FocusableOffsetCallback } from "./focusableBase"
@@ -41,7 +41,7 @@ export class FocusableContainer extends FocusableBase {
                 console.log(focusable.key);
                 return focusable.bounds && isBoundsInFrustum(focusable.bounds, frustum)
             })
-            .sort((focusableA, focusableB) => sortBoundsByPivotDistance(focusableA.bounds!, focusableB.bounds!, frustum))
+            .sort((focusableA, focusableB) => sortFocusablesByPivotDistance(focusableA, focusableB, focusablePath.focusedDistancePoint))
 
         const nearestFocusable = focusables[0]
         console.log('nearestFocusable: ', this.key, focusables, frustum, toJS(this.bounds));

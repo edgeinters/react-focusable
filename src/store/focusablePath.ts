@@ -1,7 +1,8 @@
 import { action, computed, makeObservable, observable } from "mobx";
+import { transformPosition } from "../utils/bounds";
 
 import { isOppositeDimensions, isOppositeDirection } from "../utils/direction";
-import { getFrustum } from "../utils/frustum";
+import { getFrustum, TransformationDirection } from "../utils/frustum";
 import { Focusable } from "./focusable";
 import { FocusableDimension, FocusableDirection, FocusablePosition } from "./focusableBase";
 
@@ -37,9 +38,8 @@ class FocusablePath {
         return this._focusables[this._currentFocusableIndex] || null
     }
 
-    get focusedDistancePoint(): FocusablePosition | null {
-        // count distance point of current focused item
-        return this._firstFocusable?.bounds || null
+    get focusedDistancePoint(): FocusablePosition {
+        return (this._firstFocusable && transformPosition(this._firstFocusable, TransformationDirection.TO_PARENT)) || { x: 0, y: 0 }
     }
 
     get hasFocus() {

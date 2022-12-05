@@ -1,6 +1,6 @@
 import { toJS } from "mobx";
-import { FocusableBounds, FocusableFrustum, FocusablePosition } from "../store/focusableBase";
-import { isPivotInFrustum } from "./frustum";
+import { FocusableBase, FocusableBounds, FocusableFrustum, FocusablePosition } from "../store/focusableBase";
+import { isPivotInFrustum, TransformationDirection } from "./frustum";
 
 export const getBoundsTopLeft = (bounds: FocusableBounds): FocusablePosition => {
     return {
@@ -47,7 +47,11 @@ export const isBoundsInFrustum = (bounds: FocusableBounds, frustum: FocusableFru
 export const getBoundsPivotDistance = (bounds: FocusableBounds, pivot: FocusablePosition): number => {
     const boundsPivot = getBoundsPivot(bounds)
 
-    return Math.sqrt(Math.pow(boundsPivot.x - pivot.x, 2) + Math.pow(boundsPivot.y - pivot.y, 2))
+    return getPositionsDistance(boundsPivot, pivot)
+}
+
+export const getPositionsDistance = (positionA: FocusablePosition, positionB: FocusablePosition): number => {
+    return Math.sqrt(Math.pow(positionA.x - positionB.x, 2) + Math.pow(positionA.y - positionB.y, 2))
 }
 
 export const sortBoundsByPivotDistance = (boundsA: FocusableBounds, boundsB: FocusableBounds, pivot: FocusablePosition): number => {
@@ -56,4 +60,30 @@ export const sortBoundsByPivotDistance = (boundsA: FocusableBounds, boundsB: Foc
 
     if (distanceA <= distanceB) return -1
     return 1
+}
+
+export const sortFocusablesByPivotDistance = (focusableA: FocusableBase, focusableB: FocusableBase, globalPivot: FocusablePosition): number => {
+    const positionA = transformPosition(focusableA, TransformationDirection.TO_PARENT)
+    const positionB = transformPosition(focusableB, TransformationDirection.TO_PARENT)
+
+    if (getPositionsDistance(positionA, globalPivot) <= getPositionsDistance(positionB, globalPivot)) return -1
+    return 1
+}
+
+export const transformPosition = (focusable: FocusableBase, direction: TransformationDirection): FocusablePosition => {
+    let bounds = (focusable.bounds && getBoundsPivot(focusable.bounds)) || { x: 0, y: 0 }
+    let container = focusable.parent?.parent
+
+    while (container) {
+        if (container.bounds) {
+            const containerPivot = getBoundsPivot(container.bounds)
+
+            bounds.x += containerPivot.x * direction
+            bounds.y += containerPivot.y * direction
+        }
+
+        container = container.parent
+    }
+
+    return bounds
 }
