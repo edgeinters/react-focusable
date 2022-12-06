@@ -63,27 +63,36 @@ export const sortBoundsByPivotDistance = (boundsA: FocusableBounds, boundsB: Foc
 }
 
 export const sortFocusablesByPivotDistance = (focusableA: FocusableBase, focusableB: FocusableBase, globalPivot: FocusablePosition): number => {
-    const positionA = transformPosition(focusableA, TransformationDirection.TO_PARENT)
-    const positionB = transformPosition(focusableB, TransformationDirection.TO_PARENT)
+    const positionA = transformPivotPosition(focusableA, TransformationDirection.TO_PARENT)
+    const positionB = transformPivotPosition(focusableB, TransformationDirection.TO_PARENT)
 
     if (getPositionsDistance(positionA, globalPivot) <= getPositionsDistance(positionB, globalPivot)) return -1
     return 1
 }
 
+export const transformPivotPosition = (focusable: FocusableBase, direction: TransformationDirection): FocusablePosition => {
+    if (!focusable.bounds) return { x: 0, y: 0 }
+
+    const boundsPosition = transformPosition(focusable, direction)
+
+    return getBoundsPivot({
+        ...focusable.bounds,
+        ...boundsPosition
+    })
+}
+
 export const transformPosition = (focusable: FocusableBase, direction: TransformationDirection): FocusablePosition => {
-    let bounds = (focusable.bounds && getBoundsPivot(focusable.bounds)) || { x: 0, y: 0 }
-    let container = focusable.parent?.parent
+    let position = focusable.bounds ? { ...focusable.bounds } : { x: 0, y: 0 }
+    let container = focusable.parent
 
     while (container) {
         if (container.bounds) {
-            const containerPivot = getBoundsPivot(container.bounds)
-
-            bounds.x += containerPivot.x * direction
-            bounds.y += containerPivot.y * direction
+            position.x += container.bounds.x * direction
+            position.y += container.bounds.y * direction
         }
 
         container = container.parent
     }
 
-    return bounds
+    return position
 }

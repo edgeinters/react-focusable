@@ -21,6 +21,7 @@ const StyledButton = Styled.span<{ isFocused: boolean }>`
 export const MenuItem = ({ defaultFocus, title, ...props }: MenuItemProps) => {
     const [boundsElement, setBoundsElement] = useState<HTMLElement | null>(null)
     const bounds = useBounds(boundsElement)
+    console.log('MenuItem bounds: ', bounds);
 
     return (
         <Focusable

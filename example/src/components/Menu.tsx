@@ -15,7 +15,7 @@ const StyledContainer = Styled.div`
 export const Menu = () => {
     const [boundsElement, setBoundsElement] = useState<HTMLElement | null>(null)
     const bounds = useBounds(boundsElement)
-    console.log('bounds: ', bounds);
+    console.log('menu bounds: ', bounds);
 
     return (
         <FocusableContainer

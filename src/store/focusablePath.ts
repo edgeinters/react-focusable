@@ -1,10 +1,11 @@
 import { action, computed, makeObservable, observable } from "mobx";
-import { transformPosition } from "../utils/bounds";
 
+import { transformPivotPosition } from "../utils/bounds";
 import { isOppositeDimensions, isOppositeDirection } from "../utils/direction";
 import { getFrustum, TransformationDirection } from "../utils/frustum";
 import { Focusable } from "./focusable";
 import { FocusableDimension, FocusableDirection, FocusablePosition } from "./focusableBase";
+import focusableDebugger from "./focusableDebugger";
 
 const DEFAULT_STEP_TIME = 100
 
@@ -39,7 +40,7 @@ class FocusablePath {
     }
 
     get focusedDistancePoint(): FocusablePosition {
-        return (this._firstFocusable && transformPosition(this._firstFocusable, TransformationDirection.TO_PARENT)) || { x: 0, y: 0 }
+        return (this._firstFocusable && transformPivotPosition(this._firstFocusable, TransformationDirection.TO_PARENT)) || { x: 0, y: 0 }
     }
 
     get hasFocus() {
@@ -107,9 +108,12 @@ class FocusablePath {
             return this.stop()
         }
 
+
         let nextFocusableIndex = this._getFocusableIndexFromHistory()
         if (nextFocusableIndex < 0) { // history can't be used
             const frustum = getFrustum(this.focused.bounds, this.direction)
+            focusableDebugger.stepFrom(this.focused, frustum, this.focusedDistancePoint)
+
             const nextFocus = this.focused?.parent.getFocusable(frustum, this.direction)
 
             if (!nextFocus) {
@@ -124,6 +128,7 @@ class FocusablePath {
                 nextFocusableIndex = this._focusables.length - 1
             }
 
+            focusableDebugger.stepOver(this._focusables[nextFocusableIndex], [])
         }
 
         this._currentFocusableIndex = nextFocusableIndex

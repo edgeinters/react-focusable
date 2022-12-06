@@ -1,45 +1,50 @@
+import { observer } from 'mobx-react-lite'
 import React, { useEffect, useLayoutEffect, useState } from 'react'
 
-export const FocusableDebugger = ({ }) => {
-    const [canvas, setCanvas] = useState<HTMLCanvasElement | null>(null)
-    const [canvasContext, setCanvasContext] = useState<CanvasRenderingContext2D | null>(null)
+import focusableDebugger from '../store/focusableDebugger'
+import { drawFocusableMove } from '../utils/draw'
+
+export const FocusableDebugger = observer(() => {
+    const [debugCanvas, setDebugCanvas] = useState<{ canvas: HTMLCanvasElement, context: CanvasRenderingContext2D }>()
 
     useEffect(() => {
-        if (!canvasContext) return
+        focusableDebugger.setEnabled(true)
+    }, [])
 
-        canvasContext.beginPath();
-        canvasContext.moveTo(10, 10)
-        canvasContext.lineTo(100, 100)
-        canvasContext.lineWidth = 3
-        canvasContext.strokeStyle = 'red'
-        canvasContext.stroke()
+    useEffect(() => {
+        if (!debugCanvas) return
 
-        console.log('drawn');
-
-    }, [canvasContext])
+        if (focusableDebugger.currentMove) {
+            drawFocusableMove(focusableDebugger.currentMove, debugCanvas.context)
+        }
+    }, [focusableDebugger.currentMove, focusableDebugger.currentMove?.stepIndex])
 
     useLayoutEffect(() => {
         const onResize = () => {
-            if (!canvas) return
+            if (!debugCanvas) return
 
-            canvas.width = window.innerWidth
-            canvas.height = window.innerHeight
+            debugCanvas.canvas.width = window.innerWidth
+            debugCanvas.canvas.height = window.innerHeight
+
+            if (focusableDebugger.currentMove) {
+                drawFocusableMove(focusableDebugger.currentMove, debugCanvas.context)
+            }
         }
 
         window.addEventListener('resize', onResize)
         onResize()
 
         return () => window.removeEventListener('resize', onResize)
-    }, [canvas])
+    }, [debugCanvas])
 
     return (
         <canvas
-            ref={(canvas) => {
-                setCanvas(canvas)
-                setCanvasContext(canvas?.getContext('2d') || null)
+            ref={(canvasRef) => {
+                if (canvasRef && !debugCanvas)
+                    setDebugCanvas({ canvas: canvasRef, context: canvasRef.getContext('2d')! })
             }}
             style={{ position: 'absolute', zIndex: 9999 }}
         />
     )
 
-}
+})

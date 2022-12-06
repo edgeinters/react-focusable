@@ -3,6 +3,7 @@ import { isBoundsInFrustum, sortFocusablesByPivotDistance } from "../utils/bound
 import { getFrustum, TransformationDirection, transformFrustumTo } from "../utils/frustum"
 import { Focusable, isFocusable } from "./focusable"
 import { FocusableBase, FocusableBounds, FocusableCallback, FocusableDirection, FocusableFrustum, FocusableOffsetCallback } from "./focusableBase"
+import focusableDebugger from "./focusableDebugger"
 import focusablePath from "./focusablePath"
 
 export class FocusableContainer extends FocusableBase {
@@ -31,7 +32,10 @@ export class FocusableContainer extends FocusableBase {
     getFocusable(frustum: FocusableFrustum, direction: FocusableDirection): Focusable | null {
         console.log('getFocusable:', this.key, frustum, Object.values(this.focusables).length);
         const focusable = this.getFocusableCallback && this.getFocusableCallback(frustum, direction)
-        if (focusable) return focusable
+        if (focusable) {
+            focusableDebugger.stepOver(this, frustum, [])
+            return focusable
+        }
 
         const focusables = Object.values(this.focusables)
             .filter((focusable) => {
@@ -42,6 +46,8 @@ export class FocusableContainer extends FocusableBase {
                 return focusable.bounds && isBoundsInFrustum(focusable.bounds, frustum)
             })
             .sort((focusableA, focusableB) => sortFocusablesByPivotDistance(focusableA, focusableB, focusablePath.focusedDistancePoint))
+
+        focusableDebugger.stepOver(this, frustum, focusables)
 
         const nearestFocusable = focusables[0]
         console.log('nearestFocusable: ', this.key, focusables, frustum, toJS(this.bounds));

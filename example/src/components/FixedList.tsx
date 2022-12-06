@@ -13,7 +13,7 @@ interface FixedListProps {
 }
 
 const StyledList = Styled(List)`
-    margin: 10px;
+    margin: 0px;
 `
 
 export const FixedList = ({ defaultFocus, focusableKey, ...props }: FixedListProps) => {
@@ -47,7 +47,7 @@ export const FixedList = ({ defaultFocus, focusableKey, ...props }: FixedListPro
                         >
                             {(props) => {
                                 return <FocusableItem
-                                    focusableBounds={{ x: props.index * 200, y: 300, width: 200, height: 200 }}
+                                    focusableBounds={{ x: props.index * 200, y: 0, width: 200, height: 200 }}
                                     onFocus={onFocus}
                                     {...props}
                                 />
