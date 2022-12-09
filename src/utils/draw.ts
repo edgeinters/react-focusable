@@ -1,7 +1,6 @@
 import { FocusableBounds, FocusableFrustum, FocusablePosition } from "../store/focusableBase"
 import { FocusableMove } from "../store/focusableDebugger"
-import { transformPosition } from "./bounds"
-import { TransformationDirection } from "./frustum"
+import { TransformationDirection, transformPosition } from "./bounds"
 
 export const clearContext = (context: CanvasRenderingContext2D) => {
     context.clearRect(0, 0, window.innerWidth, window.innerHeight)

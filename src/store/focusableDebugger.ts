@@ -1,5 +1,4 @@
-import { action, computed, makeObservable, observable, reaction } from "mobx";
-import { Focusable } from "./focusable";
+import { action, computed, makeObservable, observable } from "mobx";
 import { FocusableBase, FocusableFrustum, FocusablePosition } from "./focusableBase";
 
 export interface FocusableMove {
@@ -15,72 +14,52 @@ export interface FocusableMove {
 class FocusableDebugger {
 
     private _enabled: boolean = false
-    private _interval: number
+    private _focusable: FocusableBase
+    private _focusableFrustum: FocusableFrustum
+    private _focusableOptions: FocusableBase[] = []
 
-    moves: FocusableMove[] = []
-
-    get currentMove() {
-        return (this.moves.length && this.moves[0]) || null
+    get focusable() {
+        return this._focusable
     }
 
-    get lastMove() {
-        return (this.moves.length && this.moves[this.moves.length - 1]) || null
+    get focusableFrustum() {
+        return this._focusableFrustum
+    }
+
+    get focusableOptions() {
+        return this._focusableOptions
     }
 
     constructor() {
-        makeObservable<FocusableDebugger, '_enabled' | '_nextStep'>(this, {
+        makeObservable<FocusableDebugger, '_enabled' | '_focusable' | '_focusableFrustum' | '_focusableOptions'>(this, {
             _enabled: observable,
-            _nextStep: action,
-            currentMove: computed,
-            lastMove: computed,
-            moves: observable,
+            _focusable: observable,
+            _focusableFrustum: observable,
+            _focusableOptions: observable,
+            focusable: computed,
+            focusableFrustum: computed,
+            focusableOptions: computed,
+            step: action,
             setEnabled: action,
-            stepFrom: action,
-            stepOver: action,
         })
+    }
 
-        reaction(() => this.moves.length > 0 && this._enabled,
-            (shouldStart) => {
-                clearInterval(this._interval)
+    log(message: any, ...optionalParams: any[]) {
+        if (!this._enabled) return
 
-                if (shouldStart) {
-                    this._interval = window.setInterval(this._nextStep, 300)
-                }
-            })
+        console.log('[FocusableDebugger]', message, optionalParams);
     }
 
     setEnabled(enabled: boolean) {
         this._enabled = enabled
     }
 
-    stepFrom(focusable: Focusable, frustum: FocusableFrustum, focusedDistancePoint: FocusablePosition) {
-        this.moves = [{
-            focusedDistancePoint,
-            stepIndex: 0,
-            steps: [{
-                focusable,
-                frustum,
-                options: []
-            }],
-        }]
-    }
+    *step(focusable: FocusableBase, frustum: FocusableFrustum, options: FocusableBase[] = []) {
+        this._focusable = focusable
+        this._focusableFrustum = frustum
+        this._focusableOptions = options
 
-    stepOver(focusable: FocusableBase, frustum: FocusableFrustum, options: FocusableBase[]) {
-        this.lastMove?.steps.push({
-            focusable,
-            frustum,
-            options
-        })
-    }
-
-    private _nextStep = () => {
-        if (!this.currentMove) return
-
-        if (this.currentMove.stepIndex < this.currentMove.steps.length - 1) {
-            this.currentMove.stepIndex++
-        } else {
-            this.moves.splice(0, 1)
-        }
+        yield
     }
 }
 

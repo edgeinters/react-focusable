@@ -1,8 +1,8 @@
 import { action, computed, makeObservable, observable } from "mobx";
 
-import { transformPivotPosition } from "../utils/bounds";
+import { TransformationDirection, transformPivotPosition } from "../utils/bounds";
 import { isOppositeDimensions, isOppositeDirection } from "../utils/direction";
-import { getFrustum, TransformationDirection } from "../utils/frustum";
+import { getFrustum } from "../utils/frustum";
 import { Focusable } from "./focusable";
 import { FocusableDimension, FocusableDirection, FocusablePosition } from "./focusableBase";
 import focusableDebugger from "./focusableDebugger";
@@ -128,7 +128,7 @@ class FocusablePath {
                 nextFocusableIndex = this._focusables.length - 1
             }
 
-            focusableDebugger.stepOver(this._focusables[nextFocusableIndex], [])
+            focusableDebugger.stepOver(this._focusables[nextFocusableIndex], frustum, [])
         }
 
         this._currentFocusableIndex = nextFocusableIndex

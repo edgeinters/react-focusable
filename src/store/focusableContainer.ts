@@ -1,6 +1,6 @@
 import { toJS } from "mobx"
-import { isBoundsInFrustum, sortFocusablesByPivotDistance } from "../utils/bounds"
-import { getFrustum, TransformationDirection, transformFrustumTo } from "../utils/frustum"
+import { sortFocusablesByPivotDistance, TransformationDirection } from "../utils/bounds"
+import { getFrustum, isBoundsInFrustum, transformFrustumTo } from "../utils/frustum"
 import { Focusable, isFocusable } from "./focusable"
 import { FocusableBase, FocusableBounds, FocusableCallback, FocusableDirection, FocusableFrustum, FocusableOffsetCallback } from "./focusableBase"
 import focusableDebugger from "./focusableDebugger"
