@@ -129,6 +129,8 @@ class FocusablePath {
             }
 
             focusableDebugger.stepOver(this._focusables[nextFocusableIndex], frustum, [])
+        } else {
+            focusableDebugger.log('using focusable history')
         }
 
         this._currentFocusableIndex = nextFocusableIndex

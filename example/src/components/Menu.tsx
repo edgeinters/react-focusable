@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { FocusableContainer, useBounds } from 'react-focusable'
+import React, { useCallback, useState } from 'react'
+import { FocusableContainer, FocusableBaseTypes } from 'react-focusable'
 import Styled from 'styled-components'
 
 import { MenuItem } from "./MenuItem"
@@ -13,16 +13,20 @@ const StyledContainer = Styled.div`
 `
 
 export const Menu = () => {
-    const [boundsElement, setBoundsElement] = useState<HTMLElement | null>(null)
-    const bounds = useBounds(boundsElement)
-    console.log('menu bounds: ', bounds);
+    const [bounds, setBounds] = useState<FocusableBaseTypes.FocusableBounds | null>(null)
+
+    const onRef = useCallback((ref: HTMLDivElement) => {
+        setBounds(ref.getBoundingClientRect() || null)
+    }, [])
 
     return (
         <FocusableContainer
             focusableBounds={bounds}
             focusableKey="menu"
         >
-            <StyledContainer ref={setBoundsElement}>
+            <StyledContainer
+                ref={onRef}
+            >
                 <MenuItem title='Home' />
                 <MenuItem title='Movies' />
                 <MenuItem title='Series' />

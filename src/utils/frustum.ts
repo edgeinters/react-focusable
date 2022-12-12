@@ -1,4 +1,3 @@
-import { toJS } from "mobx";
 import { FocusableBounds, FocusableDirection, FocusableFrustum, FocusablePosition } from "../store/focusableBase";
 import { getBoundsBottomLeft, getBoundsBottomRight, getBoundsPivot, getBoundsTopLeft, getBoundsTopRight, TransformationDirection } from "./bounds";
 import { areVectorsClockwise } from "./vector";
@@ -51,7 +50,6 @@ export const getFrustum = (bounds: FocusableBounds, direction: FocusableDirectio
 
 export const isBoundsInFrustum = (bounds: FocusableBounds, frustum: FocusableFrustum): boolean => {
     const boundsPivot = getBoundsPivot(bounds)
-    console.log('isBoundsInFrustum: ', isPivotInFrustum(boundsPivot, frustum), toJS(bounds), frustum, boundsPivot, Math.atan2(boundsPivot.y - frustum.y, boundsPivot.x - frustum.x));
 
     return isPivotInFrustum(boundsPivot, frustum)
 }

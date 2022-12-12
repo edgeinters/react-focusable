@@ -1,4 +1,3 @@
-import { toJS } from "mobx"
 import { sortFocusablesByPivotDistance, TransformationDirection } from "../utils/bounds"
 import { getFrustum, isBoundsInFrustum, transformFrustumTo } from "../utils/frustum"
 import { Focusable, isFocusable } from "./focusable"
@@ -30,7 +29,10 @@ export class FocusableContainer extends FocusableBase {
     }
 
     getFocusable(frustum: FocusableFrustum, direction: FocusableDirection): Focusable | null {
-        console.log('getFocusable:', this.key, frustum, Object.values(this.focusables).length);
+        focusableDebugger.log('getFocusableForContainer', this.keyPath, {
+            frustum,
+        })
+
         const focusable = this.getFocusableCallback && this.getFocusableCallback(frustum, direction)
         if (focusable) {
             focusableDebugger.stepOver(this, frustum, [])
@@ -39,10 +41,8 @@ export class FocusableContainer extends FocusableBase {
 
         const focusables = Object.values(this.focusables)
             .filter((focusable) => {
-                // console.log(this.key, 'isFocusd:', focusable === focusablePath.focused, 'hasFocus:', (focusable as FocusableContainer).hasFocus);
                 if (focusable === focusablePath.focused || (focusable as FocusableContainer).hasFocus) return false
 
-                console.log(focusable.key);
                 return focusable.bounds && isBoundsInFrustum(focusable.bounds, frustum)
             })
             .sort((focusableA, focusableB) => sortFocusablesByPivotDistance(focusableA, focusableB, focusablePath.focusedDistancePoint))
@@ -50,7 +50,6 @@ export class FocusableContainer extends FocusableBase {
         focusableDebugger.stepOver(this, frustum, focusables)
 
         const nearestFocusable = focusables[0]
-        console.log('nearestFocusable: ', this.key, focusables, frustum, toJS(this.bounds));
 
         // no focusable on the same level, we have to try upper
         // if (!nearestFocusable) return this.parent?.getFocusable(transformFrustumTo(frustum, this.bounds, TransformationDirection.TO_PARENT), direction) || null

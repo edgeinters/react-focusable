@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { focus } from 'react-focusable'
+import { focus, focusableDebugger } from 'react-focusable'
 
 import App from './app'
 
@@ -20,5 +20,11 @@ document.onkeyup = ({ key }) => {
         case 'ArrowUp':
             focus.up()
             break;
+        case 'f':
+            focusableDebugger.stepForward()
+            break;
+        case 'b':
+            focusableDebugger.stepBackward()
+            break
     }
 }

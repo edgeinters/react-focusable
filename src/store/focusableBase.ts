@@ -58,6 +58,12 @@ export class FocusableBase {
         return this._enabled
     }
 
+    get keyPath(): string {
+        if (!this.parent) return this.key
+
+        return `${this.parent.keyPath}.${this.key}`
+    }
+
     constructor(parent: FocusableContainer | null, key: string, bounds: FocusableBounds | null = null) {
         this.key = key
         this.parent = parent

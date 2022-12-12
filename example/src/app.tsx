@@ -7,7 +7,7 @@ import { Menu } from './components/Menu'
 const App = () => {
     return (
         <>
-            <FocusableDebugger />
+            <FocusableDebugger interactive={true} />
             <Menu />
             <FocusableContainer
                 focusableBounds={{

@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import Styled from 'styled-components'
 
-import { Focusable, useBounds } from 'react-focusable'
+import { Focusable, FocusableBaseTypes } from 'react-focusable'
 
 interface MenuItemProps {
     defaultFocus?: boolean
@@ -19,9 +19,11 @@ const StyledButton = Styled.span<{ isFocused: boolean }>`
 `
 
 export const MenuItem = ({ defaultFocus, title, ...props }: MenuItemProps) => {
-    const [boundsElement, setBoundsElement] = useState<HTMLElement | null>(null)
-    const bounds = useBounds(boundsElement)
-    console.log('MenuItem bounds: ', bounds);
+    const [bounds, setBounds] = useState<FocusableBaseTypes.FocusableBounds | null>(null)
+
+    const onRef = useCallback((ref: HTMLDivElement) => {
+        setBounds(ref.getBoundingClientRect() || null)
+    }, [])
 
     return (
         <Focusable
@@ -33,7 +35,7 @@ export const MenuItem = ({ defaultFocus, title, ...props }: MenuItemProps) => {
                 return <StyledButton
                     {...props}
                     isFocused={focusable.isFocused}
-                    ref={setBoundsElement}
+                    ref={onRef}
                 >
                     {title}
                 </StyledButton>
