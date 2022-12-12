@@ -1,10 +1,10 @@
 {
-    "name": "react-focusable",
+    "name": "@tivio/react-focusable",
     "version": "1.0.0",
     "description": "Made with create-react-library",
     "author": "navratill",
     "license": "MIT",
-    "repository": "edgeinters/react-focusable",
+    "repository": "@tivio/react-focusable",
     "main": "dist/index.js",
     "module": "dist/index.modern.js",
     "source": "src/index.ts",
